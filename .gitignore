@@ -17,7 +17,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+#*.mod
 *.smod
 
 # Compiled Static libraries
@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+#OPL
+.metadata
+.oplproject
+.project

@@ -12,6 +12,7 @@ using namespace std;
 typedef IloArray<IloNumVarArray> NumVarMatrix2D;
 typedef IloArray<IloBoolVarArray> BoolVarMatrix;
 typedef unsigned long long llu;
+typedef unsigned int uint;
 
 
 //==============================================================================

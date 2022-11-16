@@ -6,22 +6,40 @@
 
 using namespace std;
 
-/*--------------------------------------------------*
- *        V A R I A V E I S   G L O B A I S         *
- *--------------------------------------------------*/
+// Variáveis globais
 int numJobs;
 int numMachines;
 vector<vector<int>> machineJobTime;
 vector<int> deliveryDates;
 
-int main(){
-    /*--------------------------------------------------*
-     *       L E I T U R A   D A   E N T R A D A        *
-     *--------------------------------------------------*/
+// Argumentos do programa
+string arquivo = "testes/instancia1";
+bool showProblemLog = false;
+bool showCplexLog = false;
 
-    cout << "iniciando leitura" << endl;
+void lerArgumentos(int argc, char *argv[]){
+    for(int i = 0; i < argc; ++i){
+        if(strcmp(argv[i], "-i") == 0){
+            arquivo = string(argv[++i]);
+        }
+        else if(strcmp(argv[i], "-plog") == 0){
+            showProblemLog = true;
+        }
+        else if(strcmp(argv[i], "-log") == 0){
+            showCplexLog = true;
+        }
+    }
+}
 
-    cin >> numJobs >> numMachines;
+int main(int argc, char **argv){
+
+    lerArgumentos(argc, argv);
+
+    //leitura do arquivo de entrada
+    ifstream arq;
+    arq.open(arquivo);
+    
+    arq >> numJobs >> numMachines;
 
     machineJobTime.resize(numJobs+1);
     deliveryDates.resize(numJobs+1);
@@ -30,35 +48,31 @@ int main(){
 
     for(int i = 1; i <= numJobs; ++i){
         for(int j = 1; j <= numMachines; ++j){
-            cin >> machineJobTime[i][j];
+            arq >> machineJobTime[i][j];
         }
     }
 
     for(int i = 1; i <= numJobs; ++i)
-        cin >> deliveryDates[i];
+        arq >> deliveryDates[i];
 
-    cout << "Leitura concluida" << endl;
-    /*--------------------------------------------------*
-     *        C R I A N D O    O    M O D E L O         *
-     *--------------------------------------------------*/
+
+
     IloEnv env;  // criando o ambiente
+    auto Inicio = chrono::system_clock::now();
 
     try {
-        cout << "Criando modelo" << endl;
         IloModel model(env, "Modelo"); // criando o modelo
         IloCplex cplex(env); //criando o cplex
 
-        cout << "Criando variaveis de decisao" << endl;
         // Variaveis de decisao
         IloArray<IloIntVarArray> X(env, numJobs+1);   // Ordem de realização dos "jobs"
         IloIntVarArray C(env, numJobs+1, 0, IloIntMax);   // Tempo em que o "job" foi terminado
         IloIntVarArray E(env, numJobs+1, 0, IloIntMax);   // Adiantamento da entrega do "job"
         IloIntVarArray T(env, numJobs+1, 0, IloIntMax);   // Atraso na entrega do "Job"
 
-        IloArray<IloIntVarArray> W(env, numJobs+1);
-        IloArray<IloIntVarArray> I(env, numJobs);
-        IloIntVar I0(env, 0, IloIntMax);
-
+        IloArray<IloIntVarArray> W(env, numJobs+1);  // Tempo da tarefa na fila para ser executado pela máquina
+        IloArray<IloIntVarArray> I(env, numJobs);   // Tempo de inatividade da maquina após processar uma tarefa
+        IloIntVar I0(env, 0, IloIntMax); //Tempo de inatividade antes da primeira maquina executar a primeira tarefa
     
         for(int i = 1; i < numJobs; ++i) {
             X[i] = IloIntVarArray(env, numJobs+1, 0, IloIntMax);
@@ -70,15 +84,12 @@ int main(){
 
         // Funçao Objetivo
         IloExpr Objetivo(env);
-        cout << "Criando funcao objetivo" << endl;
         for(int i = 1; i <= numJobs; i++){
             Objetivo += (E[i] + T[i]);
         }
 
-        cout << "Adicionando objetivo ao modelo" << endl;
         model.add(IloMinimize(env, Objetivo));
 
-        cout << "Criando restricoes" << endl;
         // Restricoes
         IloConstraintArray restricoes(env);
 
@@ -91,8 +102,6 @@ int main(){
             tempoTarefaInicial += W[1][i]; 
         
         restricoes.add(C[1] == I0 + tempoTarefaInicial);
-
-        cout << "bloco de restricao 1 adicionado" << endl;
 
         IloExprArray tempoTarefas(env, numJobs+1);
         IloExprArray somatorioLinhaX(env, numJobs+1); 
@@ -110,8 +119,6 @@ int main(){
             restricoes.add(C[j] == C[j-1] + I[j-1][numMachines] + tempoTarefas[j]);
         }
 
-        cout << "bloco de restricao 2 adicionado" << endl;
-
         for(int i = 1; i <= numJobs; ++i){
             for(int j = 1; j <= numJobs; ++j){
                 somatorioLinhaX[i] += X[i][j];
@@ -123,8 +130,6 @@ int main(){
             restricoes.add(T[i] >= C[i] - deliveryDates[i]);
             restricoes.add(E[i] >= deliveryDates[i] - C[i]);
         }
-
-        cout << "bloco de restricao 3 adicionado" << endl;
 
         IloArray<IloExprArray> expr4(env, numJobs+1), expr5(env, numJobs+1);
         for(int i = 1; i <= numJobs; ++i){
@@ -147,20 +152,27 @@ int main(){
             }
         }
 
-        cout << "bloco de restricoes 4 adicionado" << endl;
-
-        cout << "buscando solucao" << endl;
         model.add(restricoes);
         cplex.extract(model);
+
+        if(!showCplexLog) cplex.setOut(env.getNullStream());
+
         cplex.solve();
 
+        auto Fim = chrono::system_clock::now();
+        chrono::duration<double> Diferenca = Fim - Inicio;
+
         //imprimindo o resultado
-        cout << "Valor da função objetivo: " << cplex.getObjValue() << endl;
-        cout << "Ordem das tarefas: ";
-        for(int i = 1; i <= numJobs; ++i){
-            for(int j = 1; j <= numJobs; ++j){
-                if(cplex.getIntValue(X[j][i])) {
-                    cout << j << " \n"[i==numJobs];
+        if(showProblemLog){
+            if(showCplexLog) cout << "\n";
+            cout << "Tempo: " << Diferenca.count() << "s\n";
+            cout << "Valor da função objetivo: " << cplex.getObjValue() << endl;
+            cout << "Ordem das tarefas: ";
+            for(int i = 1; i <= numJobs; ++i){
+                for(int j = 1; j <= numJobs; ++j){
+                    if(cplex.getIntValue(X[j][i])) {
+                        cout << j << " \n"[i==numJobs];
+                    }
                 }
             }
         }

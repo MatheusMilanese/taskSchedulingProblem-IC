@@ -24,7 +24,7 @@ minimize
 
 subject to {
   
-  	C[1] == I0 + sum(k in Mchs) sum(i in Jobs) X[i][1]*P[i][k]  + sum(i in 1..(nJobs-1)) W[1][i];
+  	C[1] == I0 + sum(k in Mchs) sum(i in Jobs) X[i][1]*P[i][k] + sum(i in 1..(nMchs-1)) W[1][i];
   	
   	forall (j in 2..nJobs)
   	  	C[j] == C[j-1] + I[j-1][nMchs] + sum(i in Jobs) X[i][j]*P[i][nMchs];
@@ -32,14 +32,12 @@ subject to {
   	forall(j in 1..(nJobs-1))
   	  	forall(k in 1..(nMchs-1))
   	  	  	I[j][k] + sum(i in Jobs) X[i][j+1]*P[i][k] + W[j+1][k] == 
-  	  	  	W[j][k] + sum(i in Jobs) X[i][j] * P[i][k+1] + I[j, k+1];
+  	  	  	W[j][k] + sum(i in Jobs) X[i][j] * P[i][k+1] + I[j][k+1];
   
 	forall (i in Jobs){
-	  	sum (j in Jobs)
-	    	X[i][j] == 1;
+	  	sum (j in Jobs) X[i][j] == 1;
 	
-	  	sum (j in Jobs)
-	    	X[j][i] == 1;
+	  	sum (j in Jobs) X[j][i] == 1;
 		
 		
 		T[i] >= C[i] - DeliveryDate[i];

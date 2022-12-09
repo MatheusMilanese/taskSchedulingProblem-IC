@@ -13,14 +13,16 @@ vector<vector<int>> machineJobTime;
 vector<int> deliveryDates;
 
 // Argumentos do programa
-string arquivo = "testes/instancia1";
+string arquivoLatex = "../latex/desenho.tex";
+string arquivoEntrada = "testes/instancia1";
 bool showProblemLog = false;
 bool showCplexLog = false;
+bool showGraphicLog = false;
 
 void lerArgumentos(int argc, char *argv[]){
     for(int i = 0; i < argc; ++i){
         if(strcmp(argv[i], "-i") == 0){
-            arquivo = string(argv[++i]);
+            arquivoEntrada = string(argv[++i]);
         }
         else if(strcmp(argv[i], "-plog") == 0){
             showProblemLog = true;
@@ -28,7 +30,48 @@ void lerArgumentos(int argc, char *argv[]){
         else if(strcmp(argv[i], "-log") == 0){
             showCplexLog = true;
         }
+        else if(strcmp(argv[i], "-glog") == 0){
+            showGraphicLog = true;
+        }
     }
+}
+
+void gerarDesenho(float width, float height, float maxTime){
+    ofstream arq;
+    arq.open(arquivoLatex);
+
+    if( !arq ) { // file couldn't be opened
+      cerr << "Error: file could not be opened" << endl;
+      exit(1);
+   }
+
+    arq << "\\documentclass{article}\n";
+    arq << "\\usepackage[utf8]{inputenc}\n";
+    arq << "\\usepackage{tikz}\n\n";
+
+
+    arq << "\\begin{document}\n";
+
+    arq << "\\begin{tikzpicture}\n\n";
+    arq << "    \\draw[-stealth, line width = 0.2mm] (0, 0) -- (0, " << height << ");\n";
+    arq << "    \\draw[-stealth, line width = 0.2mm] (0, 0) -- (" << width << ", 0);\n\n";
+
+    float sizeHeightInterval = height/(numMachines+1);
+    for(int i = 1; i <= numMachines; i++){
+        arq << "    \\node[left] at (0, " << sizeHeightInterval * i << "){$M_" << numMachines+1-i << "$};\n";
+    }
+
+    float sizeWidthInterval = width/(maxTime + 1);
+
+    for(int i = 1; i <= maxTime; i++){
+        arq << "    \\node[below] at (" << sizeWidthInterval * i << ", 0){" << i << "};\n";
+    }
+    
+
+    arq << "\\end{tikzpicture}\n";
+    arq << "\\end{document}";
+
+    arq.close();
 }
 
 int main(int argc, char **argv){
@@ -37,7 +80,7 @@ int main(int argc, char **argv){
 
     //leitura do arquivo de entrada
     ifstream arq;
-    arq.open(arquivo);
+    arq.open(arquivoEntrada);
     
     arq >> numJobs >> numMachines;
 
@@ -54,8 +97,6 @@ int main(int argc, char **argv){
 
     for(int i = 1; i <= numJobs; ++i)
         arq >> deliveryDates[i];
-
-
 
     IloEnv env;  // criando o ambiente
     auto Inicio = chrono::system_clock::now();
@@ -162,6 +203,16 @@ int main(int argc, char **argv){
         auto Fim = chrono::system_clock::now();
         chrono::duration<double> Diferenca = Fim - Inicio;
 
+        if(showGraphicLog){
+            int lastJobId;
+            for(int i = 1; i <= numJobs; i++)
+                if(cplex.getIntValue(X[numJobs][i])){
+                    lastJobId = i;
+                    break;
+                }
+            gerarDesenho(12, 8, cplex.getIntValue(C[lastJobId]));
+        }
+        
         //imprimindo o resultado
         if(showProblemLog){
             if(showCplexLog) cout << "\n";

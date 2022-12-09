@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+
+    \draw[-stealth, line width = 0.2mm] (0, 0) -- (0, 8);
+    \draw[-stealth, line width = 0.2mm] (0, 0) -- (12, 0);
+
+    
+    \node[left] at (0, 1.6){M4};
+    \node[left] at (0, 3.2){M3};
+    \node[left] at (0, 4.8){M2};
+    \node[left] at (0, 6.4){M1};
+
+    \node[below] at (0.67, 0){1};
+    \node[below] at (1.34, 0){2};
+    \node[below] at (2.01, 0){3};
+    \node[below] at (2.68, 0){4};
+    \node[below] at (3.35, 0){5};
+    \node[below] at (4.02, 0){6};
+    \node[below] at (4.69, 0){7};
+    \node[below] at (5.36, 0){8};
+    \node[below] at (6.03, 0){9};
+    \node[below] at (6.7, 0){10};
+    \node[below] at (7.37, 0){11};
+    \node[below] at (8.04, 0){12};
+    \node[below] at (8.71, 0){13};
+    \node[below] at (9.38, 0){14};
+    \node[below] at (10.05, 0){15};
+    \node[below] at (10.72, 0){16};
+    \node[below] at (11.39, 0){17};
+
+    % \node[draw, align = center] at (0, 6.75) {O11};
+    \draw (0, 6.75) rectangle (3.35, 6);
+    \node at (1.675, 6.4){O11};
+
+\end{tikzpicture}
+
+\end{document}

@@ -39,6 +39,8 @@ OBJ_PRJ = Mod.o
 
 CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR)
 
+all: clean compile Projeto
+
 Projeto :  $(OBJ_PRJ)
 	$(CCC) $(CCFLAGS) -o Mod $(OBJ_PRJ) $(CCLNFLAGS)
 
@@ -50,4 +52,3 @@ clean:
 	rm -f *~
 	rm Mod
 
-all: clean compile Projeto

@@ -8,15 +8,62 @@
     \draw[-stealth, line width = 0.2mm] (0, 0) -- (0, 8);
     \draw[-stealth, line width = 0.2mm] (0, 0) -- (12, 0);
 
-    \node[left] at (0, 1.33333){$M_5$};
-    \node[left] at (0, 2.66667){$M_4$};
-    \node[left] at (0, 4){$M_3$};
-    \node[left] at (0, 5.33333){$M_2$};
-    \node[left] at (0, 6.66667){$M_1$};
-    \node[below] at (2, 0){1};
-    \node[below] at (4, 0){2};
-    \node[below] at (6, 0){3};
-    \node[below] at (8, 0){4};
-    \node[below] at (10, 0){5};
+    \node[left] at (0, 1.6){$M_4$};
+    \node[left] at (0, 3.2){$M_3$};
+    \node[left] at (0, 4.8){$M_2$};
+    \node[left] at (0, 6.4){$M_1$};
+
+    \draw[fill=white] (2.4, 5.9) rectangle (4.32, 6.9);
+    \node[align = center] at (3.36, 6.4) {$O_{11}$};
+    \draw[dashed] (4.32, 0) -- (4.32, 5.9);
+    \node[below] at (4.32, 0){9};
+
+    \draw[fill=white] (0, 5.9) rectangle (0.96, 6.9);
+    \node[align = center] at (0.48, 6.4) {$O_{21}$};
+    \draw[dashed] (0.96, 0) -- (0.96, 5.9);
+    \node[below] at (0.96, 0){2};
+
+    \draw[fill=white] (4.32, 5.9) rectangle (6.72, 6.9);
+    \node[align = center] at (5.52, 6.4) {$O_{31}$};
+    \draw[dashed] (6.72, 0) -- (6.72, 5.9);
+    \node[below] at (6.72, 0){14};
+
+
+    \draw[fill=white] (4.32, 4.3) rectangle (5.28, 5.3);
+    \node[align = center] at (4.8, 4.8) {$O_{12}$};
+    \draw[dashed] (5.28, 0) -- (5.28, 4.3);
+    \node[below] at (5.28, 0){11};
+
+    \draw[fill=white] (0.96, 4.3) rectangle (3.36, 5.3);
+    \node[align = center] at (2.16, 4.8) {$O_{22}$};
+    \draw[dashed] (3.36, 0) -- (3.36, 4.3);
+    \node[below] at (3.36, 0){7};
+
+    \draw[fill=white] (6.72, 4.3) rectangle (7.68, 5.3);
+    \node[align = center] at (7.2, 4.8) {$O_{32}$};
+    \draw[dashed] (7.68, 0) -- (7.68, 4.3);
+    \node[below] at (7.68, 0){16};
+
+
+    \draw[fill=white] (5.28, 2.7) rectangle (7.68, 3.7);
+    \node[align = center] at (6.48, 3.2) {$O_{13}$};
+    \draw[fill=white] (3.36, 2.7) rectangle (5.28, 3.7);
+    \node[align = center] at (4.32, 3.2) {$O_{23}$};
+    \draw[fill=white] (8.16, 2.7) rectangle (9.12, 3.7);
+    \node[align = center] at (8.64, 3.2) {$O_{33}$};
+    \draw[dashed] (9.12, 0) -- (9.12, 2.7);
+    \node[below] at (9.12, 0){19};
+
+
+    \draw[fill=white] (7.68, 1.1) rectangle (9.12, 2.1);
+    \node[align = center] at (8.4, 1.6) {$O_{14}$};
+    \draw[fill=white] (5.28, 1.1) rectangle (7.68, 2.1);
+    \node[align = center] at (6.48, 1.6) {$O_{24}$};
+    \draw[fill=white] (9.12, 1.1) rectangle (11.52, 2.1);
+    \node[align = center] at (10.32, 1.6) {$O_{34}$};
+    \draw[dashed] (11.52, 0) -- (11.52, 1.1);
+    \node[below] at (11.52, 0){24};
+
+
 \end{tikzpicture}
 \end{document}

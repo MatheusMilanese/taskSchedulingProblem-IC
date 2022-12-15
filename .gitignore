@@ -35,3 +35,8 @@
 .metadata
 .oplproject
 .project
+
+#Latex
+.log
+.pdf
+.aux

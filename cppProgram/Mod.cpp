@@ -36,7 +36,7 @@ void lerArgumentos(int argc, char *argv[]){
     }
 }
 
-void gerarDesenho(float width, float height, float maxTime){
+void gerarDesenho(float width, float height, vector<vector<int>> timeEndOfTask){
     ofstream arq;
     arq.open(arquivoLatex);
 
@@ -61,11 +61,29 @@ void gerarDesenho(float width, float height, float maxTime){
         arq << "    \\node[left] at (0, " << sizeHeightInterval * i << "){$M_" << numMachines+1-i << "$};\n";
     }
 
-    float sizeWidthInterval = width/(maxTime + 1);
+    int maxTime = 0;
+    for(int i = 1; i <= numJobs; i++) maxTime = max(maxTime, timeEndOfTask[i][numMachines]);
+    double sizeWidthInterval = width/(maxTime + 1);
 
-    for(int i = 1; i <= maxTime; i++){
-        arq << "    \\node[below] at (" << sizeWidthInterval * i << ", 0){" << i << "};\n";
+    arq << "\n";
+    double x1, x2, y;
+    bool timeCheck[maxTime+1] = {0};
+    for(int j = 1; j <= numMachines; j++){
+        for(int i = 1; i <= numJobs; i++){
+            x1 = timeEndOfTask[i][j]-machineJobTime[i][j];
+            x2 = timeEndOfTask[i][j];
+            y = (sizeHeightInterval * (numMachines + 1 - j));
+            arq << "    \\draw[fill=white] (" << x1 * sizeWidthInterval << ", " << y-0.5 << ") rectangle (" << x2 * sizeWidthInterval << ", " << y+0.5 << ");\n";
+            arq << "    \\node[align = center] at (" << (x1 + (x2-x1)/2) * sizeWidthInterval <<", " << y << ") {$O_{" << i << j << "}$};\n";
+            if(!timeCheck[timeEndOfTask[i][j]]){
+                timeCheck[timeEndOfTask[i][j]] = true;
+                arq << "    \\draw[dashed] (" << sizeWidthInterval * x2 << ", 0) -- (" << sizeWidthInterval * x2 << ", " << y-0.5 << ");\n";
+                arq << "    \\node[below] at (" << sizeWidthInterval * x2 << ", 0){" << x2 << "};\n\n";
+            }
+        }
+        arq << "\n";
     }
+
     
 
     arq << "\\end{tikzpicture}\n";
@@ -204,13 +222,34 @@ int main(int argc, char **argv){
         chrono::duration<double> Diferenca = Fim - Inicio;
 
         if(showGraphicLog){
-            int lastJobId;
+            vector<int> jobCompletionTime(numJobs+1);
+            vector<int> jobOrder(numJobs+1);
+            vector<vector<int>> timeEndOfTasks(numJobs+1, vector<int>(numMachines+1));
+
             for(int i = 1; i <= numJobs; i++)
-                if(cplex.getIntValue(X[numJobs][i])){
-                    lastJobId = i;
-                    break;
+                jobCompletionTime[i] = cplex.getIntValue(C[i]);
+
+            for(int i = 1; i <= numJobs; ++i){
+                for(int j = 1; j <= numJobs; ++j){
+                    if(cplex.getIntValue(X[j][i])) {
+                        jobOrder[i] = j;
+                    }
                 }
-            gerarDesenho(12, 8, cplex.getIntValue(C[lastJobId]));
+            }
+            timeEndOfTasks[jobOrder[1]][1] = cplex.getIntValue(I0) + machineJobTime[jobOrder[1]][1];
+            for(int i = 2; i <= numMachines; i++){
+                timeEndOfTasks[jobOrder[1]][i] = timeEndOfTasks[jobOrder[1]][i-1] + cplex.getIntValue(W[jobOrder[1]][i-1]) + machineJobTime[jobOrder[1]][i];
+            }
+
+            for(int j = 2; j <= numJobs; j++){
+                for(int k = 1; k <= numMachines; k++){
+                    timeEndOfTasks[jobOrder[j]][k] = timeEndOfTasks[jobOrder[j-1]][k] + cplex.getIntValue(I[j-1][k]) + machineJobTime[jobOrder[j]][k];
+                }
+            }
+            cout << "chegou aqui" << endl;
+
+
+            gerarDesenho(12, 8, timeEndOfTasks);
         }
         
         //imprimindo o resultado

@@ -31,8 +31,7 @@ subject to {
   	  	
   	forall(j in 1..(nJobs-1))
   	  	forall(k in 1..(nMchs-1))
-  	  	  	I[j][k] + sum(i in Jobs) X[i][j+1]*P[i][k] + W[j+1][k] == 
-  	  	  	W[j][k] + sum(i in Jobs) X[i][j] * P[i][k+1] + I[j][k+1];
+  	  	  	I[j][k] + (sum(i in Jobs) X[i][j+1]*P[i][k]) + W[j+1][k] == W[j][k] + (sum(i in Jobs) X[i][j] * P[i][k+1]) + I[j][k+1];
   
 	forall (i in Jobs){
 	  	sum (j in Jobs) X[i][j] == 1;
@@ -40,9 +39,12 @@ subject to {
 	  	sum (j in Jobs) X[j][i] == 1;
 		
 		
-		T[i] >= C[i] - DeliveryDate[i];
-		E[i] >= DeliveryDate[i] - C[i];
-	}	
+		T[i] >= C[i] - sum(j in Jobs) X[j][i]*DeliveryDate[j];
+		E[i] >=  sum(j in Jobs) X[j][i]*DeliveryDate[j] - C[i];
+	}
+	
+
+	
 }
 
 execute {

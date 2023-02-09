@@ -78,13 +78,16 @@ void gerarDesenho(float width, float height, vector<vector<int>> timeEndOfTask){
             if(!timeCheck[timeEndOfTask[i][j]]){
                 timeCheck[timeEndOfTask[i][j]] = true;
                 arq << "    \\draw[dashed] (" << sizeWidthInterval * x2 << ", 0) -- (" << sizeWidthInterval * x2 << ", " << y-0.5 << ");\n";
-                arq << "    \\node[below] at (" << sizeWidthInterval * x2 << ", 0){" << x2 << "};\n\n";
+                if(find(deliveryDates.begin(), deliveryDates.end(), x2) == deliveryDates.end())
+                    arq << "    \\node[below] at (" << sizeWidthInterval * x2 << ", 0){" << x2 << "};\n\n";
             }
         }
         arq << "\n";
     }
 
-    
+    for(int i = 1; i < deliveryDates.size(); i++){
+        arq << "\\node[below] at (" << sizeWidthInterval * deliveryDates[i] << ", 0){\\textbf{d = " << deliveryDates[i] << "}};\n\n";
+    }
 
     arq << "\\end{tikzpicture}\n";
     arq << "\\end{document}";
@@ -178,6 +181,7 @@ int main(int argc, char **argv){
             restricoes.add(C[j] == C[j-1] + I[j-1][numMachines] + tempoTarefas[j]);
         }
 
+        IloExprArray datasDeEntrega(env, numJobs+1);
         for(int i = 1; i <= numJobs; ++i){
             for(int j = 1; j <= numJobs; ++j){
                 somatorioLinhaX[i] += X[i][j];
@@ -186,8 +190,13 @@ int main(int argc, char **argv){
             restricoes.add(somatorioLinhaX[i] == 1);
             restricoes.add(somatorioColunaX[i] == 1);
             
-            restricoes.add(T[i] >= C[i] - deliveryDates[i]);
-            restricoes.add(E[i] >= deliveryDates[i] - C[i]);
+            datasDeEntrega[i] = IloExpr(env);
+            for(int j = 1; j <= numJobs; j++){
+                datasDeEntrega[i] += X[j][i]*deliveryDates[j];
+            }
+
+            restricoes.add(T[i] >= C[i] - datasDeEntrega[i]);
+            restricoes.add(E[i] >= datasDeEntrega[i] - C[i]);
         }
 
         IloArray<IloExprArray> expr4(env, numJobs+1), expr5(env, numJobs+1);
@@ -246,7 +255,6 @@ int main(int argc, char **argv){
                     timeEndOfTasks[jobOrder[j]][k] = timeEndOfTasks[jobOrder[j-1]][k] + cplex.getIntValue(I[j-1][k]) + machineJobTime[jobOrder[j]][k];
                 }
             }
-            cout << "chegou aqui" << endl;
 
 
             gerarDesenho(12, 8, timeEndOfTasks);
@@ -255,6 +263,7 @@ int main(int argc, char **argv){
         //imprimindo o resultado
         if(showProblemLog){
             if(showCplexLog) cout << "\n";
+
             cout << "Tempo: " << Diferenca.count() << "s\n";
             cout << "Valor da função objetivo: " << cplex.getObjValue() << endl;
             cout << "Ordem das tarefas: ";

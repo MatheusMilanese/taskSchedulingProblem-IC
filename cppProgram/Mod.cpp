@@ -72,6 +72,7 @@ void gerarDesenho(float width, float height, vector<vector<int>> timeEndOfTask){
         for(int i = 1; i <= numJobs; i++){
             x1 = timeEndOfTask[i][j]-machineJobTime[i][j];
             x2 = timeEndOfTask[i][j];
+
             y = (sizeHeightInterval * (numMachines + 1 - j));
             arq << "    \\draw[fill=white] (" << x1 * sizeWidthInterval << ", " << y-0.5 << ") rectangle (" << x2 * sizeWidthInterval << ", " << y+0.5 << ");\n";
             arq << "    \\node[align = center] at (" << (x1 + (x2-x1)/2) * sizeWidthInterval <<", " << y << ") {$O_{" << i << j << "}$};\n";
@@ -231,12 +232,9 @@ int main(int argc, char **argv){
         chrono::duration<double> Diferenca = Fim - Inicio;
 
         if(showGraphicLog){
-            vector<int> jobCompletionTime(numJobs+1);
             vector<int> jobOrder(numJobs+1);
             vector<vector<int>> timeEndOfTasks(numJobs+1, vector<int>(numMachines+1));
 
-            for(int i = 1; i <= numJobs; i++)
-                jobCompletionTime[i] = cplex.getIntValue(C[i]);
 
             for(int i = 1; i <= numJobs; ++i){
                 for(int j = 1; j <= numJobs; ++j){
@@ -245,9 +243,10 @@ int main(int argc, char **argv){
                     }
                 }
             }
+
             timeEndOfTasks[jobOrder[1]][1] = cplex.getIntValue(I0) + machineJobTime[jobOrder[1]][1];
             for(int i = 2; i <= numMachines; i++){
-                timeEndOfTasks[jobOrder[1]][i] = timeEndOfTasks[jobOrder[1]][i-1] + cplex.getIntValue(W[jobOrder[1]][i-1]) + machineJobTime[jobOrder[1]][i];
+                timeEndOfTasks[jobOrder[1]][i] = timeEndOfTasks[jobOrder[1]][i-1] + cplex.getIntValue(W[1][i-1]) + machineJobTime[jobOrder[1]][i];
             }
 
             for(int j = 2; j <= numJobs; j++){
@@ -255,7 +254,6 @@ int main(int argc, char **argv){
                     timeEndOfTasks[jobOrder[j]][k] = timeEndOfTasks[jobOrder[j-1]][k] + cplex.getIntValue(I[j-1][k]) + machineJobTime[jobOrder[j]][k];
                 }
             }
-
 
             gerarDesenho(12, 8, timeEndOfTasks);
         }

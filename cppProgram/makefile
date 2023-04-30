@@ -35,17 +35,20 @@ CONCERTINCDIR = $(CONCERTDIR)/include
 CPLEXINCDIR   = $(CPLEXDIR)/include
 
 
-OBJ_PRJ = Mod.o
+OBJ_PRJ = heuristica.o Mod.o
 
 CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR)
 
-all: clean compile Projeto
+all: clean heuristica modelo projeto
 
-Projeto :  $(OBJ_PRJ)
+projeto: modelo heuristica $(OBJ_PRJ)
 	$(CCC) $(CCFLAGS) -o Mod $(OBJ_PRJ) $(CCLNFLAGS)
 
-compile: 
-	$(CCC) -c $(CCFLAGS) Mod.cpp -o Mod.o 
+modelo: Mod.cpp
+	$(CCC) -c $(CCFLAGS) Mod.cpp -o Mod.o
+
+heuristica: heuristica.cpp
+	$(CCC) -c $(CCFLAGS) heuristica.cpp -o heuristica.o
 
 clean:
 	rm -f *.o

@@ -3,6 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <ilcplex/ilocplex.h>
+#include "heuristica.h"
 
 using namespace std;
 
@@ -119,6 +120,8 @@ int main(int argc, char **argv){
 
     for(int i = 1; i <= numJobs; ++i)
         arq >> deliveryDates[i];
+
+    heuristicaOrdemCrescente(machineJobTime, deliveryDates); 
 
     IloEnv env;  // criando o ambiente
     auto Inicio = chrono::system_clock::now();

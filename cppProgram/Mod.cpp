@@ -19,6 +19,7 @@ string arquivoEntrada = "testes/instancia1";
 bool showProblemLog = false;
 bool showCplexLog = false;
 bool showGraphicLog = false;
+bool solveWithHeuristic = false;
 
 void lerArgumentos(int argc, char *argv[]){
     for(int i = 0; i < argc; ++i){
@@ -33,6 +34,9 @@ void lerArgumentos(int argc, char *argv[]){
         }
         else if(strcmp(argv[i], "-glog") == 0){
             showGraphicLog = true;
+        }
+        else if(strcmp(argv[i], "-h") == 0){
+            solveWithHeuristic = true;
         }
     }
 }
@@ -121,8 +125,9 @@ int main(int argc, char **argv){
     for(int i = 1; i <= numJobs; ++i)
         arq >> deliveryDates[i];
 
-    heuristicaOrdemCrescente(machineJobTime, deliveryDates); 
-
+    if(solveWithHeuristic){
+        heuristicaOrdemCrescente(machineJobTime, deliveryDates); 
+    }
     IloEnv env;  // criando o ambiente
     auto Inicio = chrono::system_clock::now();
 

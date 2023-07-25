@@ -20,6 +20,7 @@ bool showProblemLog = false;
 bool showCplexLog = false;
 bool showGraphicLog = false;
 bool solveWithHeuristic = false;
+bool solveWithGeneticAlgorithm = false;
 
 void lerArgumentos(int argc, char *argv[]){
     for(int i = 0; i < argc; ++i){
@@ -37,6 +38,9 @@ void lerArgumentos(int argc, char *argv[]){
         }
         else if(strcmp(argv[i], "-h") == 0){
             solveWithHeuristic = true;
+        }
+        else if(strcmp(argv[i], "-ga")){
+            solveWithGeneticAlgorithm = true;
         }
     }
 }
@@ -128,6 +132,14 @@ int main(int argc, char **argv){
     if(solveWithHeuristic){
         heuristicaOrdemCrescente(machineJobTime, deliveryDates); 
     }
+    if(solveWithGeneticAlgorithm){
+        algoritmoGenetico(machineJobTime, deliveryDates, sizePopulation, maxIterations);
+    }
+
+    if(!(showCplexLog || showProblemLog || showGraphicLog)){
+        return 0;
+    }
+
     IloEnv env;  // criando o ambiente
     auto Inicio = chrono::system_clock::now();
 

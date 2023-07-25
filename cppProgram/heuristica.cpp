@@ -1,7 +1,5 @@
 #include "heuristica.h"
 
-using namespace std;
-
 /*#######################################################
              F U N Ç Õ E S     I N T E R N A S
   #######################################################*/
@@ -59,29 +57,36 @@ vector<vector<int>> GerarTempoDeConclusao(vector<vector<int>> machineJobTime, ve
     return tempoDeConclusao;
 }
 
-
-
 int funcaoObjetivo(vector<vector<int>> machineJobTime, vector<int> deliveryDates, vector<int> indexOrder){
     int valorObjetivo = 0;
     vector<vector<int>> tempoDeConclusão = GerarTempoDeConclusao(machineJobTime, deliveryDates, indexOrder);
 
     for(int i = 1; i < deliveryDates.size(); i++){
-        valorObjetivo += abs(tempoDeConclusão[i][tempoDeConclusão[1].size()-1] - deliveryDates[indexOrder[i]]);
+        valorObjetivo += std::abs(tempoDeConclusão[i][tempoDeConclusão[1].size()-1] - deliveryDates[indexOrder[i]]);
     }
-    
     
     return valorObjetivo;
 }
+
+/*#######################################################
+             B U S C A      L O C A L
+  #######################################################*/
 
 vector<int> melhoraPorTroca(vector<vector<int>> machineJobTime, vector<int> deliveryDates, vector<int> indexOrder){
     int valorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, indexOrder);
     vector<int> melhorOrdem = indexOrder;
     vector<int> ordemBase = indexOrder;
+    cout << "obj: " << valorObjetivo << " | ";
+    for(auto x : indexOrder) cout << x << " ";
+    cout  << endl;
     for(int i = 1; i < indexOrder.size()-1; i++){
         for(int j = i+1; j < indexOrder.size(); j++){
             indexOrder[i] = ordemBase[j];
             indexOrder[j] = ordemBase[i];
             int novoValorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, indexOrder);
+            cout << "obj: " << novoValorObjetivo << " | ";
+            for(auto x : indexOrder) cout << x << " ";
+            cout  << endl;
             if(novoValorObjetivo < valorObjetivo){
                 valorObjetivo = novoValorObjetivo;
                 melhorOrdem = indexOrder;
@@ -89,6 +94,7 @@ vector<int> melhoraPorTroca(vector<vector<int>> machineJobTime, vector<int> deli
             indexOrder[i] = ordemBase[i];
             indexOrder[j] = ordemBase[j];
         }
+        
         indexOrder = melhorOrdem;
         ordemBase = indexOrder;
     }
@@ -99,12 +105,22 @@ vector<int> melhoraPorTroca(vector<vector<int>> machineJobTime, vector<int> deli
     return melhorOrdem;
 }
 
+int tempoTotal(vector<int> jobTime){
+    int tempo = 0;
+    for(auto x : jobTime){
+        tempo += x;
+    }
+    return tempo;
+}
+
 vector<int> heuristicaOrdemCrescente(vector<vector<int>> machineJobTime, vector<int> deliveryDates){
     vector<int> indexOrder(deliveryDates.size());
     indexOrder[1] = 1;
     for(int i = 2; i < machineJobTime.size(); i++){
         int k = i-1;
-        while(k >= 1 && deliveryDates[i] < deliveryDates[indexOrder[k]]){
+        while(k >= 1 && 
+              deliveryDates[i] < deliveryDates[indexOrder[k]] ||
+              (deliveryDates[i] == deliveryDates[indexOrder[k]] && tempoTotal(machineJobTime[i]) > tempoTotal(machineJobTime[indexOrder[k]]))){
             indexOrder[k+1] = indexOrder[k];
             k--;
         }
@@ -120,8 +136,76 @@ vector<int> heuristicaOrdemCrescente(vector<vector<int>> machineJobTime, vector<
         cout << indexOrder[i] << " \n"[i == indexOrder.size()-1];
     cout << "############################\n";
 
-    
-
     return indexOrder;
 }
 
+/*#######################################################
+           A L G O R I T M O     G E N É T I C O 
+  #######################################################*/
+
+int getRandomNumber(int min, int max) {
+    random_device rd;
+    mt19937 rng(rd()); 
+    uniform_int_distribution<int> uni(min, max);
+    return uni(rng);
+}
+
+vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> deliveryDates, int _sizePopulation, int _maxIterations){
+    int sizePopulation = _sizePopulation;
+    vector<vector<int>> population(sizePopulation, vector<int>(deliveryDates.size()));
+
+    for(int i = 1; i < population[0].size(); i++){
+        population[0][i] = i;
+        population[1][i] = i;
+    }
+    int valorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, population[0]);
+    int iteration = 0, maxIterations = _maxIterations, indexSolution;
+    bool newBestSolution;
+
+    while(iteration++ < maxIterations || newBestSolution){
+        newBestSolution = false;
+        shuffle(population[1].begin()+1, population[1].end(), default_random_engine(random_device()()));
+        for(int i = 2; i < sizePopulation; i++){
+
+            for(int j = 1; j < population[0].size(); j++){
+                population[i][j] = -1;
+            }
+
+            int start = getRandomNumber(1, deliveryDates.size()-2);
+            int end = getRandomNumber(start + 1, deliveryDates.size()-1);
+            
+            for(int j = start; j <= end; j++){
+                population[i][j] = population[0][j];
+            }
+            for(int j = 1; j < population[0].size(); j++){
+                if(j < start || j > end){
+                    int idx = j;
+                    while(find(population[i].begin(), population[i].end(), population[1][idx]) != population[i].end()) {
+                        idx++;
+                        if(idx >= deliveryDates.size()) idx = 1;
+                    }
+                    population[i][j] = population[1][idx];
+                }
+            }
+            int novoValorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, population[i]);
+
+            if(novoValorObjetivo < valorObjetivo){
+                newBestSolution = true;
+                valorObjetivo = novoValorObjetivo;
+                indexSolution = i;
+            }
+        }
+        if(newBestSolution){
+            population[0] = population[indexSolution];
+        }
+    }
+
+    cout << "############ ALGORITMO GENETICO #############\n";
+    cout << "valor da função objetivo: " << valorObjetivo << endl;
+    cout << "Ordem das tarefas: ";
+    for(int i = 1; i < population[0].size(); i++)
+        cout << population[0][i] << " \n"[i == population[0].size()-1];
+    cout << "############################\n";
+
+    return population[0];
+}

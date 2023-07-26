@@ -151,8 +151,7 @@ int getRandomNumber(int min, int max) {
 }
 
 vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> deliveryDates, int _sizePopulation, int _maxIterations){
-    int sizePopulation = _sizePopulation;
-    vector<vector<int>> population(sizePopulation, vector<int>(deliveryDates.size()));
+    vector<vector<int>> population(_sizePopulation, vector<int>(deliveryDates.size()));
 
     for(int i = 1; i < population[0].size(); i++){
         population[0][i] = i;
@@ -165,18 +164,21 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
     while(iteration++ < maxIterations || newBestSolution){
         newBestSolution = false;
         shuffle(population[1].begin()+1, population[1].end(), default_random_engine(random_device()()));
-        for(int i = 2; i < sizePopulation; i++){
+        for(int i = 2; i < _sizePopulation; i++){
 
             for(int j = 1; j < population[0].size(); j++){
                 population[i][j] = -1;
             }
-
+            //crossover
             int start = getRandomNumber(1, deliveryDates.size()-2);
-            int end = getRandomNumber(start + 1, deliveryDates.size()-1);
+            int end = getRandomNumber(start, deliveryDates.size()-1);
             
+            // genes do pai1
             for(int j = start; j <= end; j++){
                 population[i][j] = population[0][j];
             }
+
+            //genes do pai2
             for(int j = 1; j < population[0].size(); j++){
                 if(j < start || j > end){
                     int idx = j;
@@ -187,6 +189,16 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
                     population[i][j] = population[1][idx];
                 }
             }
+
+            //mutacao
+            int gen1 = getRandomNumber(1, population[0].size()-1);
+            int gen2 = getRandomNumber(1, population[0].size()-1);
+
+            int aux = population[i][gen2];
+            population[i][gen2] = population[i][gen1];
+            population[i][gen1] = aux;
+
+            // seleção do melhor individuo
             int novoValorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, population[i]);
 
             if(novoValorObjetivo < valorObjetivo){
@@ -196,11 +208,15 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
             }
         }
         if(newBestSolution){
-            population[0] = population[indexSolution];
+            for(int j = 1; j < population[0].size(); j++){
+                population[0][j] = population[indexSolution][j];
+            }
         }
     }
 
     cout << "############ ALGORITMO GENETICO #############\n";
+    cout << "tamanho da populacao: " << _sizePopulation << endl;
+    cout << "numero de gerações: " << maxIterations << endl;
     cout << "valor da função objetivo: " << valorObjetivo << endl;
     cout << "Ordem das tarefas: ";
     for(int i = 1; i < population[0].size(); i++)

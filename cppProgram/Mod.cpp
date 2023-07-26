@@ -21,26 +21,31 @@ bool showCplexLog = false;
 bool showGraphicLog = false;
 bool solveWithHeuristic = false;
 bool solveWithGeneticAlgorithm = false;
+int sizePopulation = 10;
+int maxIterations = 10;
 
-void lerArgumentos(int argc, char *argv[]){
-    for(int i = 0; i < argc; ++i){
-        if(strcmp(argv[i], "-i") == 0){
-            arquivoEntrada = string(argv[++i]);
-        }
-        else if(strcmp(argv[i], "-plog") == 0){
+void lerArgumentos(int argc, char* argv[]) {
+    for (int i = 1; i < argc; ++i) {
+        std::string argument = argv[i];
+        if (argument == "-i" && i + 1 < argc) {
+            arquivoEntrada = argv[++i];
+        } else if (argument == "-plog") {
             showProblemLog = true;
-        }
-        else if(strcmp(argv[i], "-log") == 0){
+        } else if (argument == "-log") {
             showCplexLog = true;
-        }
-        else if(strcmp(argv[i], "-glog") == 0){
+        } else if (argument == "-glog") {
             showGraphicLog = true;
-        }
-        else if(strcmp(argv[i], "-h") == 0){
+        } else if (argument == "-h") {
             solveWithHeuristic = true;
-        }
-        else if(strcmp(argv[i], "-ga")){
+        } else if (argument == "-ga") {
             solveWithGeneticAlgorithm = true;
+        } else if (argument.find("-sizePopulation==") == 0){
+            string valueString = argument.substr(17); // Ignora os primeiros 17 caracteres (tamanho de "-sizePopulation==")
+            sizePopulation = atoi(valueString.c_str());
+        }
+        else if (argument.find("-maxIterations==") == 0){
+            string valueString = argument.substr(16); // Ignora os primeiros 17 caracteres (tamanho de "-sizePopulation==")
+            maxIterations = atoi(valueString.c_str());
         }
     }
 }

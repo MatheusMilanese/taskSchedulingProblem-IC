@@ -1,0 +1,390 @@
+\documentclass[10pt, a4paper]{article}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Margens do documento.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{anysize}                    % Pacote para configurar as margens do documento.
+\usepackage[margin = 2.0cm, left = 3.0cm, right = 3.0cm, top = 2.0cm, bottom = 2.0cm, headheight = 16pt]{geometry}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% [CONFIGURACAO]:   TABELAS e GRAFICOS.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex]{graphicx, color}    % Pacote de configuracao grafica.
+\usepackage[table, xcdraw]{xcolor}      % Pacote de cores.
+\usepackage[hidelinks]{hyperref}        % Pacote para configurar os links das referencias.
+\usepackage{tabularx, multirow}         % Pacote para configuracao de tabelas.
+\usepackage{booktabs}                   % Pacote para melhorar a qualidade das tabelas.
+\usepackage{subfig}                     % Pacote para configurar subfiguras.
+\usepackage{float}                      % Pacote para definir objetos inteiros (Como figuras e tabelas) como float.
+\usepackage{array}
+\usepackage{adjustbox}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% [CONFIGURACAO]: FONTES e TEXTOS.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}             % Pacote para configurar o padrao de caracteres.
+\usepackage[portuges, brazilian]{babel} % Pacote para configuracao de linguagem.
+\usepackage{amssymb, amsmath}           % Pacote com padroes de linguagem e texto matematico.
+\usepackage{enumerate}                  % Pacote para configuracao das listas enumeradas.
+\usepackage{caption}                    % Pacote para configurar os captions.
+\usepackage{natbib}                     % Pacote para configurar as citacoes.
+\usepackage{ifthen}                     % Pacote para criar comandos condicionais.
+\usepackage{parskip}                    % http://ctan.org/pkg/parskip
+\usepackage{titlesec}                   % Pacote para formatar os titulos.
+
+\titleformat{\section}{\normalfont\fontsize{12}{15}\bfseries}{\thesection}{1em}{}[{\titlerule[1pt]}]    % Configuracao dos titulos.
+\setlength{\parindent}{0pt}
+\renewcommand{\baselinestretch}{1.5}
+\allowdisplaybreaks                     % Permite a quebra de página entre equacoes.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% [CONFIGURACAO]: CABECALHOS e RODAPES.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}           % Pacote para configuracao de cabecalhos e rodapes.
+\usepackage{afterpage}
+\pagestyle{fancy}               % Define um estilo de pagina com cabecalho.
+\fancyhf{}                      % Remove as configuracoes de cabecalho e rodape.
+\fancyhead[R]{                  % Define o cabecalho.
+    \footnotesize
+    Universidade Federal do Espírito Santo          \\
+    Programa Institucional de Iniciação Científica  \\
+    Relatório Final de Pesquisa                     \\
+    Ciências Exatas e da Terra                      \\
+}
+\renewcommand{\headrulewidth}{0pt}  % Tamanho da linha horizontal abaixo do cabecalho.
+\fancyfoot[R]{\thepage}             % Define o rodape.
+
+\pagenumbering{arabic}
+\usepackage{verbatim}   % Pacote para comentar trechos do texto.
+\usepackage{ragged2e}
+
+
+
+% \newcommand{\Cor}{\cellcolor[HTML]{e6e6e6}}
+\newcommand{\Cor}{\cellcolor[HTML]{E5E5E5}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% [DOCUMENTO]:    INICIO.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+    \afterpage{\rfoot{\thepage}}
+    
+    \vspace*{1pt}
+    \begin{center}
+        {\Large \bf Métodos Exatos para o Problema de Corte Bidimensional com Dimensões Abertas - Piic/UFES}
+    \end{center}
+    % \vspace{.5cm}
+    
+    %\noindent
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \Cor {\bf Edital:}                              &   \textbf{Edital Piic 2022/2023.}                                              \\ \hline
+        \Cor {\bf Grande Área do Conhecimento (CNPq):}  &   Ciências Exatas e da Terra.                                                  \\ \hline
+        \Cor {\bf Área do Conhecimento (CNPq):}         &   Ciência da Computação.                                                       \\ \hline
+        \Cor {\bf Título do Projeto:}                   &   Métodos Computacionais em Otimização.                                        \\ \hline
+        \Cor {\bf Título do Subprojeto:}                &   Métodos exatos para o problema de corte bidimensional com dimensões abertas. \\ \hline
+        \Cor {\bf Professor Orientador:}                &   Oberlan Christo Romão.                                                       \\ \hline
+        \Cor {\bf Estudante:}                           &   João Victor do Rozário Recla.                                                \\ \hline
+    \end{tabularx}
+    \vspace{.5cm}
+
+
+    %TODO: Deixar o texto impessoal
+
+    \input{Topicos/TP0-Resumo}
+    \input{Topicos/TP1-Introducao}
+    \input{Topicos/TP2-Objetivos}
+    \input{Topicos/TP3-Embasamento-Teorico}
+    \input{Topicos/TP4-Metodologia}
+
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% RESULTADOS INICIAIS %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Resultados iniciais}
+        Tendo os modelos matemáticos exatos bem definidos, cada método apresentado foi implementado para dar início aos primeiros experimentos com a resolução do \emph{SPP-2D}, com dimensões abertas, não-guilhotinado. Usando os servidores da \emph{FAPES 116/2019} (Fundação de Amparo à Pesquisa e Inovação do Espírito Santo), com a configuração da máquina sendo 1 processador Intel(R)-Xeon(R)-Silver-4114, com CPU @ 2.20GHz 10 núcleos (20 threads), 160Gb RAM, rodando em um Sistema GNU/Linux Ubuntu Server, cada modelo foi testado com um conjunto de instâncias presentes na literatura, estando essas instâncias revisadas por (\cite{Iori2022}).
+
+        Para analisar o desempenho de cada método proposto, foram realizados experimentos com as instâncias \emph{NGCUT}, encontradas no trabalho de (\cite{Martello2003}), considerando inicialmente os modelos sem rotação dos itens (Tabelas ~\ref{Tab-Resultados-sem-rotacao} e ~\ref{Tab-Resultados-area}) e depois os modelos com rotação dos itens (Tabelas ~\ref{Tab-Resultados-com-rotacao} e ~\ref{Tab-Resultados-area}).
+    
+        Os resultados são exibidos nas tabelas a seguir. A primeira coluna de cada tabela indica o nome da instância testada, e as duas colunas seguintes descrevem a quantidade de itens no problema e a soma da área dos mesmos. O conjunto de seis colunas agrupas pelo nome de um modelo apresentam as informações necessárias para a análise dos métodos. O tempo limite para a resolução dos modelos pelo CPLEX foi de 3600 segundos.
+
+        %%% [TABELA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{table}[H]
+            \renewcommand{\arraystretch}{1.3}   % Configura o espacamento da tabela.
+            \centering
+            % \scriptsize
+            %\tiny
+            \caption{Resultados para os modelos da altura e do perímetro sem rotação dos itens.} \label{Tab-Resultados-sem-rotacao}     % Titulo.
+            \resizebox{\textwidth}{!}{%
+                \begin{tabular}{l *{16}{r}}
+                    \toprule
+                    \multirow{2}{*}{\textbf{Instância}} & \multicolumn{2}{c}{\textbf{Itens}} & & \multicolumn{6}{c}{\textbf{Modelo da altura}}
+                    & & \multicolumn{6}{c}{\textbf{Modelo do perímetro}}
+                    \\
+                    \cline{2-3} \cline{5-10} \cline{12-17}
+                    & \textbf{N} & \textbf{Área}    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                                                    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                    \\
+                    \midrule
+                    NGCUT1  & 10 &  190     && 10 & 23 & 23 &          82,61\% & 0,00 &    6,69    && 13 & 15 &  28 & \textbf{97,44\%} & 0,00 &  635,78    \\
+                    NGCUT2  & 17 &  277     && 10 & 30 & 30 &          92,33\% & 0,20 & 3600,00    && 14 & 21 &  35 & \textbf{94,22\%} & 0,25 & 3600,00    \\
+                    NGCUT3  & 21 &  277     && 10 & 31 & 31 &          89,35\% & 0,31 & 3600,00    && 16 & 21 &  37 &          82,44\% & 0,40 & 3600,00    \\
+                    NGCUT4  &  7 &  162     && 10 & 20 & 20 &          81,00\% & 0,00 &    0,23    && 12 & 15 &  27 &          90,00\% & 0,00 &    0,64    \\
+                    NGCUT5  & 14 &  353     && 10 & 36 & 36 & \textbf{98,06\%} & 0,21 & 3600,00    && 15 & 24 &  39 &          98,06\% & 0,28 & 3600,00    \\
+                    NGCUT6  & 15 &  290     && 10 & 31 & 31 &          93,55\% & 0,14 & 3600,00    && 17 & 19 &  36 &          89,78\% & 0,30 & 3600,00    \\
+                    NGCUT7  &  8 &  175     && 20 & 20 & 20 &          43,75\% & 0,00 &    0,03    &&  9 & 23 &  32 & \textbf{84,54\%} & 0,00 &    0,25    \\
+                    NGCUT8  & 13 &  633     && 20 & 33 & 33 &          95,91\% & 0,01 & 3600,00    && 26 & 26 &  52 &          93,64\% & 0,13 & 3600,00    \\
+                    NGCUT9  & 13 &  633     && 20 & 33 & 33 &          91,89\% & 0,01 & 3600,00    && 35 & 30 &  65 & \textbf{92,76\%} & 0,24 & 3600,00    \\
+                    NGCUT10 & 13 & 1720     && 30 & 80 & 80 &          71,67\% & 0,21 & 3600,00    && 31 & 58 &  89 & \textbf{95,66\%} & 0,09 & 3600,00    \\
+                    NGCUT11 & 15 & 1483     && 30 & 52 & 52 &          95,06\% & 0,11 & 3600,00    && 36 & 43 &  79 & \textbf{95,80\%} & 0,11 & 3600,00    \\
+                    NGCUT12 & 22 & 2296     && 30 & 87 & 87 &          87,97\% & 0,34 & 3600,00    && 55 & 48 & 103 &          86,97\% & 0,46 & 3600,00    \\
+                    \bottomrule
+                \end{tabular}
+            }
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+        \end{table}
+    
+        Olhando para o aproveitamento da área do objeto, em cada um dos modelos na Tabela~\ref{Tab-Resultados-sem-rotacao}, cabe dizer que o modelo do perímetro proporcionou um melhor resultado em comparação com o método da altura, tendo conseguido reduzir o desperdício da área em 58,33\% do experimento.
+    
+        %%% [TABELA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{table}[H]
+            \renewcommand{\arraystretch}{1.3}   % Configura o espacamento da tabela.
+            \centering
+            % \scriptsize
+            %\tiny
+            \caption{Resultados para os modelos da altura e do perímetro com rotação dos itens.} \label{Tab-Resultados-com-rotacao}     % Titulo.
+            \resizebox{\textwidth}{!}{%
+                \begin{tabular}{l *{16}{r}}
+                    \toprule
+                    \multirow{2}{*}{\textbf{Instância}} & \multicolumn{2}{c}{\textbf{Itens}} & & \multicolumn{6}{c}{\textbf{Modelo da altura}}
+                    & & \multicolumn{6}{c}{\textbf{Modelo do perímetro}}
+                    \\
+                    \cline{2-3} \cline{5-10} \cline{12-17}
+                    & \textbf{N} & \textbf{Área}    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                                                    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                    \\
+                    \midrule
+                    NGCUT1  & 10 &  190     && 10 & 20 & 20 &           95,00\% & 0,21 & 3600,00    && 14 & 14 &  28 & 96,94\% & 0,17 & 3600,00    \\
+                    NGCUT2  & 17 &  277     && 10 & 29 & 29 &  \textbf{95,52\%} & 0,43 & 3600,00    && 18 & 17 &  35 & 90,52\% & 0,41 & 3600,00    \\
+                    NGCUT3  & 21 &  277     && 10 & 29 & 29 &           95,52\% & 0,48 & 3600,00    && 16 & 21 &  37 & 82,44\% & 0,55 & 3600,00    \\
+                    NGCUT4  &  7 &  162     && 10 & 18 & 18 &           90,00\% & 0,00 &    0,34    && 16 & 11 &  27 & 92,05\% & 0,00 &   12,87    \\
+                    NGCUT5  & 14 &  353     && 10 & 36 & 36 &  \textbf{98,06\%} & 0,32 & 3600,00    && 17 & 23 &  40 & 90,28\% & 0,40 & 3600,00    \\
+                    NGCUT6  & 15 &  290     && 10 & 29 & 29 & \textbf{100,00\%} & 0,38 & 3600,00    && 19 & 16 &  35 & 95,39\% & 0,34 & 3600,00    \\
+                    NGCUT7  &  8 &  175     && 20 & 10 & 10 &           87,50\% & 0,00 &    1,42    && 20 & 10 &  30 & 87,50\% & 0,00 &    3,41    \\
+                    NGCUT8  & 13 &  633     && 20 & 33 & 33 &  \textbf{95,91\%} & 0,16 & 3600,00    && 31 & 22 &  53 & 92,82\% & 0,29 & 3600,00    \\
+                    NGCUT9  & 13 &  633     && 20 & 55 & 55 &  \textbf{88,55\%} & 0,43 & 3600,00    && 36 & 32 &  68 & 84,55\% & 0,38 & 3600,00    \\
+                    NGCUT10 & 13 & 1720     && 30 & 59 & 59 &           97,18\% & 0,21 & 3600,00    && 36 & 51 &  87 & 93,68\% & 0,26 & 3600,00    \\
+                    NGCUT11 & 15 & 1483     && 30 & 53 & 53 &  \textbf{93,27\%} & 0,27 & 3600,00    && 42 & 40 &  82 & 88,27\% & 0,24 & 3600,00    \\
+                    NGCUT12 & 22 & 2296     && 30 & 83 & 83 &  \textbf{92,21\%} & 0,44 & 3600,00    && 62 & 63 & 125 & 58,78\% & 0,61 & 3600,00    \\
+                    \bottomrule
+                \end{tabular}
+            }
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+        \end{table}
+    
+        Na Tabela~\ref{Tab-Resultados-com-rotacao}, é o modelo da altura que demonstra os melhores resultados para o aproveitamento da área do objeto, em comparação ao método do perímetro, tendo conseguido reduzir o desperdício da área em 75,00\% do experimento. Analisando os dados da Tabela~\ref{Tab-Resultados-sem-rotacao} com a Tabela~\ref{Tab-Resultados-com-rotacao} é evidente que o modelo da altura com rotação dos itens se sobressai em comparação ao mesmo modelo sem a rotação dos itens.
+
+        \newpage
+        Embora o modelo do perímetro com rotação dos itens não tenha apresentado melhores resultados, comparado ao seu modelo sem rotação, isso pode indicar que os modelos que consideram a rotação dos itens necessitam de mais tempo para encontrar a mesma solução ou uma solução melhor, visto que o \emph{gap} do modelo da altura e o \emph{gap} do modelo do perímetro apresentam uma grande diferença em relação ao \emph{gap} dos mesmos modelos, sem a rotação dos itens, no mesmo intervalo de tempo.
+    
+        %%% [TABELA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{table}[H]
+            \renewcommand{\arraystretch}{1.3}   % Configura o espacamento da tabela.
+            \centering
+            % \scriptsize
+            % \tiny
+            \caption{Resultados para o modelo da área sem/com rotação dos itens.} \label{Tab-Resultados-area}     % Titulo.
+            \resizebox{\textwidth}{!}{%
+                \begin{tabular}{l *{16}{r}}
+                    \toprule
+                    \multirow{2}{*}{\textbf{Instância}} & \multicolumn{2}{c}{\textbf{Itens}} & & \multicolumn{6}{c}{\textbf{Modelo da área (Sem rotação)}}
+                    & & \multicolumn{6}{c}{\textbf{Modelo da área (Com rotação)}}
+                    \\
+                    \cline{2-3} \cline{5-10} \cline{12-17}
+                    & \textbf{N} & \textbf{Área}    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                                                    & & \textbf{W} & \textbf{H} & \textbf{FO} & \textbf{Aproveitamento} & \textbf{gap (\%)} & \textbf{Tempo (seg)}
+                    \\
+                    \midrule
+                    NGCUT1  & 10 &  190     && 13 & 15 &  195 &          97,44\% & 0,00 & 2052,40   && 32 &   6 &  192 & \textbf{98,96\%} & 0,34 & 3600,00    \\
+                    NGCUT2  & 17 &  277     && 33 &  9 &  297 &          93,27\% & 0,42 & 3600,00   &&  9 &  31 &  279 &          99,28\% & 0,61 & 3600,00    \\
+                    NGCUT3  & 21 &  277     && 18 & 17 &  306 & \textbf{90,52\%} & 0,65 & 3600,00   && 30 &  10 &  300 & \textbf{92,33\%} & 0,74 & 3600,00    \\
+                    NGCUT4  &  7 &  162     &&  7 & 24 &  168 & \textbf{96,43\%} & 0,00 &    4,44   && 24 &   7 &  168 & \textbf{96,43\%} & 0,00 &   10,92    \\
+                    NGCUT5  & 14 &  353     && 15 & 24 &  360 &          98,06\% & 0,46 & 3600,00   && 30 &  12 &  360 &          98,06\% & 0,60 & 3600,00    \\
+                    NGCUT6  & 15 &  290     && 19 & 16 &  304 & \textbf{95,39\%} & 0,45 & 3600,00   && 10 &  30 &  300 &          96,67\% & 0,67 & 3600,00    \\
+                    NGCUT7  &  8 &  175     &&  9 & 23 &  207 &          84,54\% & 0,00 &    0,26   && 36 &   5 &  180 & \textbf{97,22\%} & 0,00 &    2,71    \\
+                    NGCUT8  & 13 &  633     && 12 & 54 &  648 & \textbf{97,69\%} & 0,27 & 3600,00   && 44 &  15 &  660 &          95,91\% & 0,46 & 3600,00    \\
+                    NGCUT9  & 13 &  633     && 17 & 62 & 1054 &          92,41\% & 0,53 & 3600,00   && 13 &  90 & 1170 &          83,25\% & 0,69 & 3600,00    \\
+                    NGCUT10 & 13 & 1720     && 31 & 58 & 1798 &          95,66\% & 0,11 & 3600,00   && 16 & 109 & 1744 & \textbf{98,62\%} & 0,43 & 3600,00    \\
+                    NGCUT11 & 15 & 1483     && 48 & 34 & 1632 &          90,87\% & 0,41 & 3600,00   && 32 &  52 & 1664 &          89,12\% & 0,56 & 3600,00    \\
+                    NGCUT12 & 22 & 2296     && 86 & 30 & 2580 & \textbf{88,99\%} & 0,70 & 3600,00   && 16 & 162 & 2592 &          88,58\% & 0,77 & 3600,00    \\
+                    \bottomrule
+                \end{tabular}
+            }
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+        \end{table}
+    
+        Com relação ao aproveitamento da área do objeto, o modelo da área sem rotação, comparado aos resultados da Tabela~\ref{Tab-Resultados-sem-rotacao}, apresenta a redução do desperdício da área em 58,33\% do experimento, enquanto o modelo da área com rotação demonstra otimização da área em 41,66\% do experimento, em comparação aos resultados da Tabela~\ref{Tab-Resultados-com-rotacao}. Na Tabela~\ref{Tab-Resultados-area}, comparando-se os métodos da área, ambos demonstraram resultados bem próximos, tendo cada um conseguido otimizar a área do objeto em 50,00\% do experimento.
+    
+        De modo geral, é possível observar que, para a maioria das instâncias, nenhum dos métodos apresentou uma solução antes que o tempo limite fosse excedido. A partir da análise do \emph{gap} (diferença entre a melhor solução obtida e a melhor solução possível) de cada modelo, que indica o quão longe do melhor resultado a solução encontrada esta, fica claro que para os experimentos com \emph{gap} ${> 0}$ seria necessário admitir um tempo maior para os modelos conseguirem encontrar uma solução ótima. Com isso, também fica evidente que os modelos com rotação demoram mais para encontrar a mesma solução dos métodos sem rotação ou uma solução melhor, tomando como base o \emph{gap} dos resultados obtidos que superam o \emph{gap} dos modelos sem rotação.
+
+
+    \newpage
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% PROXIMOS PASSOS %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Próximos passos}
+        Tendo um resultado preliminar sobre o desempenho dos modelos na resolução do problema de corte e empacotamento bidimensional com dimensões abertas, os próximos passos estarão relacionados ao estudo e a implementação de heurísticas e meta-heurísticas. Com isso, deverá ser apresentado uma nova modelagem para os métodos desenvolvidos até o momento.
+        
+        Para poder concluir o trabalho, respondendo à hipótese de pesquisa, os novos modelos baseados em heurísticas e meta-heurísticas serão testados, considerando outras instâncias da literatura, para ser possível comparar a diferença de desempenho entre os métodos apresentados e a diferença entre os resultados já obtidos.
+
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% CRONOGRAMA %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Cronograma}
+        A seguir são apresentadas, na Tabela~\ref{Tab-Atividades} e na Tabela~\ref{Tab-Cronograma}, a relação das atividades previstas para a próxima etapa do TCC (Trabalho de conclusão de curso) e das atividades que já foram realizadas durante o primeiro semestre de 2023. Na Tabela~\ref{Tab-Atividades} estão enumeradas todas as atividades do projeto. Na Tabela~\ref{Tab-Cronograma} estão sendo exibidos, em um cronograma, os meses em que cada tarefa foi/será feita. 
+    
+        % Define um padrao de cor para colorir uma celula da tabela.
+        % \newcommand{\Cr}{\cellcolor{red!59}}
+        % \newcommand{\Cg}{\cellcolor{green!59}}
+        % \newcommand{\Cy}{\cellcolor{yellow!59}}
+        % \newcommand{\Cor}{\cellcolor[HTML]{E6E6E6}}
+        \newcommand{\Cgr}{\cellcolor[HTML]{BEBEBE}}
+        
+        % [ATIVIDADES]
+        \begin{table}[htbp]
+            \renewcommand{\arraystretch}{1.2}   % Configura o espacamento da tabela.
+            \centering
+            \caption{Atividades previstas e realizadas.}    % Titulo.
+            \begin{tabular}{|c|l|}
+                \hline
+                \Cgr $\Xi$  & \Cor \textbf{Atividade}                                   \\ \hline
+                \Cor 01     & Levantamento bibliográfico.                               \\ \hline
+                \Cor 02     & Levantamento de heurísticas e meta-heurísticas.           \\ \hline
+                \Cor 03     & Estudo e implementação dos modelos baseados em rotação.   \\ \hline    
+                \Cor 04     & Realização de testes com o modelo formulado.              \\ \hline
+                \Cor 05     & Escrita e desenvolvimento inicial do TCC.                 \\ \hline
+                \Cor 06     & Estudo e escolha das heurísticas que serão implementadas. \\ \hline
+                \Cor 07     & Implementação das heurísticas no modelo.                  \\ \hline
+                \Cor 08     & Realização de testes com o modelo baseado em heurísticas. \\ \hline
+                \Cor 09     & Escrita e desenvolvimento final do TCC.                   \\ \hline
+            \end{tabular}
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+            \label{Tab-Atividades}
+        \end{table}
+    
+        % [CRONOGRAMA]
+        \begin{table}[htbp]
+            \renewcommand{\arraystretch}{1.2}   % Configura o espacamento da tabela.
+            \centering
+            \caption{Cronograma de atividades previstas e realizadas (Mar./2023 a Dez./2023).}   % Titulo.
+            \begin{tabular}{|*{11}{c|}}
+                \hline
+                \Cor \textbf{Atividade}  &
+                \Cor \textbf{Mar.}       &
+                \Cor \textbf{Abr.}       &
+                \Cor \textbf{Mai.}       &
+                \Cor \textbf{Jun.}       &
+                \Cor \textbf{Jul.}       &
+                \Cor \textbf{Ago.}       &
+                \Cor \textbf{Set.}       &
+                \Cor \textbf{Out.}       &
+                \Cor \textbf{Nov.}       &
+                \Cor \textbf{Dez.}
+                \\
+                \hline
+                \Cor $01$
+                    & \Cgr
+                    & \Cgr
+                    & \Cgr
+                    & \Cgr
+                    & \Cgr
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    \\ \hline
+                \Cor $02$
+                    & &
+                    & \Cgr
+                    & \Cgr
+                    & \Cgr
+                    & \Cor
+                    & \Cor
+                    & & &
+                    \\ \hline
+                \Cor $03$
+                    & &
+                    & \Cgr
+                    & \Cgr
+                    & \Cgr
+                    & & & & &
+                    \\ \hline
+                \Cor $04$
+                    & & &
+                    & \Cgr
+                    & \Cgr
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    & &
+                    \\ \hline
+                \Cor $05$
+                    & & &
+                    & \Cgr
+                    & \Cgr
+                    & & & & &
+                    \\ \hline
+                \Cor $06$
+                    & & & & &
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    & &
+                    \\ \hline
+                \Cor $07$
+                    & & & & & & &
+                    & \Cor
+                    & \Cor
+                    &
+                    \\ \hline
+                \Cor $08$
+                    & & & & & & &
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    \\ \hline
+                \Cor $09$
+                    & & & & & &
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    & \Cor
+                    \\ \hline
+            \end{tabular}
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+            \label{Tab-Cronograma}
+            % $\Phi$
+            % $\Delta$
+            % $\Xi$
+        \end{table}
+
+
+    \newpage
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% REFERENCIAS %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \bibliographystyle{hapalike2-NOand}
+    \bibliography{Bibliografia}
+    
+\end{document}
+
+

@@ -1,0 +1,179 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% [METODOLOGIA] %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Metodologia}
+    
+    %%% [METODOLOGIA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Para solucionar o problema, quatro métodos de resolução serão abordados: um que visa minimizar a altura, outro que visa minimizar o perímetro, outro que visa minimizar a área e outro que visa minimizar as sobras de um objeto retangular, desconsiderando qualquer tipo de rotação nos itens.
+
+    No 1º modelo a largura do objeto ($W$) é fixa enquanto a altura ($H$), que deve ser minimizada satisfazendo a demanda de corte ou empacotamento dos itens, é aberta. No 2º modelo tanto $W$ quanto $H$ são abertos, ou seja, o modelo deve decidir seus valores para o perímetro ser o mínimo possível, mantendo a restrição dos itens no objeto. Já no 3º modelo, semelhante ao segundo, ambas as variáveis ($W$ e $H$) devem ser encontradas, porém, de modo com que a área do objeto possa ser miníma e os itens se mantenham sem sobreposições. No 4º modelo, a largura e a altura do objeto também são abertas e precisam admitir valores que minimizem a diferença entre a área do objeto e a área total dos itens, ou seja, precisam admitir valores que maximizem a área aproveitada do objeto.
+
+    Para implementar o modelo matemático exato, que representa a modelagem do problema de corte e empacotamento bidimensional, e elaborar as restrições de cada método proposto, foi utilizado a plataforma IBM ILOG CPLEX que opera usando a linguagem de programação \emph{OPL} (\emph{Optimization Programming Language}), uma linguagem própria, e ideal, para expressar e simplificar problemas de otimização combinatória por meios matemáticos.
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% [MODELO BASE] %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Modelo base}
+    
+        A formulação do modelo matemático que servirá de base para a resolução do problema é composta por variáveis de decisão que se relacionam com a posição ($x_i$, $y_i$) e a dimensão de cada item no objeto, onde os únicos dados de entrada são a quantidade $N$ de itens demandados e a dimensão (largura e altura) de cada item, representada por ${w}_i$ e ${h}_i$, respectivamente. Na Tabela~\ref{Tab-Variaveis-de-decisao} são apresentadas as variáveis de decisão principais, comuns a cada um dos métodos.
+
+        %%% [TABELA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{table}[htbp]
+            \renewcommand{\arraystretch}{1.3}   % Configura o espacamento da tabela.
+            \centering
+            \footnotesize
+            \caption{Variáveis de decisão do problema.}     % Titulo. 
+            \begin{tabular}{ l p{11cm}}
+                \hline
+                \textbf{Variável}       &   \textbf{Descrição}  \\
+                \hline
+                ${H}$, ${W}$            &   Variáveis inteiras e positivas que indicam, respectivamente, os valores da altura e da largura do objeto.  \\
+                $E_{ij}$, $C_{ij}$      &   Variáveis binárias que indicam o posicionamento relativo entre um item ${i}$ e um item ${j}$ (se está ou não à esquerda, ou acima de outro item). \\
+                ${x}_i$, ${y}_i$        &   Variáveis inteiras que indicam a posição ${(x, y)}$ do item ${i}$ no objeto.    \\
+                \hline
+            \end{tabular}
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+            \label{Tab-Variaveis-de-decisao}
+        \end{table}
+
+        \newpage
+        Abaixo são representadas as funções objetivo de cada método de resolução:
+    
+        %%% [FUNCOES OBJETIVO] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{equation}
+            Minimizar \; \qquad H   \label{eqn:fo1}
+        \end{equation}
+        \begin{equation}
+            Minimizar \; W + H  \label{eqn:fo2}
+        \end{equation}
+        \begin{equation}
+            Minimizar \; \; W * H  \label{eqn:fo3}
+        \end{equation}
+        \begin{equation}
+            Minimizar \; \; (W * H) - \sum_{i=1}^N (w_{i} * h_{i})   \label{eqn:fo4}
+        \end{equation}
+        
+        Onde o modelo matemático base do problema está sujeito à:
+    
+        %%% [RESTRICOES DO MODELO BASE] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{small}
+            \begin{align}
+                \label{eqn:1}
+                & {x}_i + {w}_i \leq {W}    && \qquad 1 \leq i \leq N \\
+                \label{eqn:2}
+                & {y}_i + {h}_i \leq {H}    && \qquad 1 \leq i \leq N \\
+                %{x}_i \+ {y}_i && \geq 0      && \qquad 1 \leq i \leq N
+                \label{eqn:3}
+                & {E}_{ij} + {E}_{ji} + {C}_{ij} + {C}_{ji}  \geq 1   && \qquad 1 \leq i\ , j \leq N, \ i < j \\
+                \label{eqn:4}
+                %  x[i] - x[j] +     W*l[i][j] <= W - w[i];
+                & {x}_i - {x}_j + W E_{ij} \leq {W} - {w}_i   && \qquad 1 \leq i\ , j \leq N \\
+                \label{eqn:5}
+                %  y[i] - y[j] +     H*b[i][j] <= H - h[i];
+                & {y}_i - {y}_j + H C_{ij} \leq {H} - {h}_i   && \qquad 1 \leq i\ , j \leq N
+            \end{align}
+        \end{small}
+    
+        As funções objetivo (\ref{eqn:fo1}), (\ref{eqn:fo2}), (\ref{eqn:fo3}) e (\ref{eqn:fo4}) representam os métodos para minimizar, respectivamente, a altura, o perímetro, a área e as sobras do objeto. As restrições (\ref{eqn:1}) e (\ref{eqn:2}) garantem que os itens serão inseridos no interior do objeto e o conjunto de restrições (\ref{eqn:3})-(\ref{eqn:5}) impedem que haja a sobreposição dos itens no objeto.
+
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% [LINEARIZACAO DO MODELO BASE] %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Linearização do modelo base}
+    
+        No modelo base, a multiplicação das variáveis $W$ com $E_{ij}$ e $H$ com $C_{ij}$ torna as restrições (\ref{eqn:4}) e (\ref{eqn:5}) não-lineares, pelo fato desta multiplicação envolver duas variáveis de decisão, uma inteira e outra binária. Para testar o modelo usando o CPLEX, é preciso linearizar estas restrições. Com isso, considerando $L_{ij}$ e $A_{ij}$ como variáveis auxiliares, inteiras e positivas, para a linearização da multiplicação $W E_{ij}$ e $H C_{ij}$, respectivamente, e percebendo que as variáveis $E_{ij}$ e $C_{ij}$ são binárias, onde a multiplicação $W E_{ij}$ será 0 ou $W$ e a multiplicação $H C_{ij}$ será 0 ou $H$, o modelo pode ser reformulado de modo que as restrições (\ref{eqn:4}) e (\ref{eqn:5}) podem ser substituídas pelas restrições:
+
+        %%% [RESTRICOES DE LINEARIZACAO DO MODELO BASE] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{small}
+            \begin{align}
+                \label{eqn:6}
+                % L[i][j] <= W.
+                & {L}_{ij} \leq {W}                                 && \qquad 1 \leq i\ , j \leq N  \\
+                \label{eqn:7}
+                % L[i][j]    <=      W_max * E[i][j].
+                & {L}_{ij} \leq \widehat{W} {E}_{ij}                && \qquad 1 \leq i\ , j \leq N  \\
+                \label{eqn:8}
+                % L[i][j]    >=  W  -      W_max *(1 - E[i][j]).
+                & {L}_{ij} \geq {W} - \widehat{W} (1 - {E}_{ij})    && \qquad 1 \leq i\ , j \leq N  \\
+                \label{eqn:9}
+                % A[i][j]    <=  H.
+                & {A}_{ij} \leq {H}                                 && \qquad 1 \leq i\ , j \leq N  \\
+                \label{eqn:10}
+                % A[i][j]    <=      H_max * C[i][j].
+                & {A}_{ij} \leq \widehat{H} {C}_{ij}                && \qquad 1 \leq i\ , j \leq N  \\
+                \label{eqn:11}
+                % A[i][j]    >=  H  -      H_max *(1 - C[i][j]).
+                & {A}_{ij} \geq {H} - \widehat{H} (1 - {C}_{ij})    && \qquad 1 \leq i\ , j \leq N \\
+                \label{eqn:12}
+                % x[i] - x[j] +  L[i][j]  <=  W  - w[i].
+                &{x}_i - {x}_j + L_{ij} \leq {W} - {w}_i            && \qquad 1 \leq i\ , j \leq N \\
+                \label{eqn:13}
+                % y[i] - y[j] +  A[i][j]  <=  H  - h[i].
+                &{y}_i - {y}_j + A_{ij} \leq {H} - {h}_j            && \qquad 1 \leq i\ , j \leq N
+            \end{align}
+        \end{small}
+        
+        onde, $\widehat{W} = \sum_{i=1}^N w_i$ (Somatório da largura de cada item $i$) e $\widehat{H} = \sum_{i=1}^N h_i$ (Somatório da altura de cada item $i$) indicam o \emph{UB} (\emph{Upper Bound} - Limite superior) de $W$ e $H$, respectivamente.
+
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% [LINEARIZACAO DA AREA] %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Linearização da área}
+        
+        Nos métodos da área, as funções objetivo (\ref{eqn:fo3}) e (\ref{eqn:fo4}), assim como nas restrições (\ref{eqn:4}) e (\ref{eqn:5}), também envolvem a multiplicação de duas variáveis de decisão, $W$ com $H$, que impedem a linearidade do modelo. No caso da área, onde as duas variáveis são inteiras, a linearização desse produto é um pouco mais complicada, por existir um conjunto maior de valores que ambos podem assumir.
+
+        Para linearizar o produto de $W$ com $H$ é necessário, primeiramente, representar uma dessas variáveis inteiras em sua forma binária. Sendo assim, tendo escolhido a altura do objeto, foi criado uma nova variável binária ($\theta_i$) para armazenar os bits que representam $H$ (Exemplo: $H = 8 \rightarrow \theta_i = [0, 0, 0, 1]$, onde o valor decimal de $H$ é dado pelo somatório de $\theta_{1}\times2^0 + \theta_{2}\times2^1 + \theta_{3}\times2^2 + \theta_{4}\times2^3 = 8 $). Como o valor exato da altura não é conhecida, é preciso determinar um valor $K = (\lfloor \log_2 {M} \rfloor + 1)$ para indicar a quantidade máxima de bits que o modelo precisará para representar $H$ na forma binária.
+    
+        Sendo $\omega_i$ uma nova variável inteira que represente a multiplicação linear de $W$ com $\theta_i$, podemos definir as restrições que o modelo precisará para tornar o produto $W H$ linear. Assim, na Tabela~\ref{Tab-Variaveis-de-decisao-area} são descritas as novas variáveis do modelo, seguido das novas funções objetivos, (\ref{eqn:fo5}) e (\ref{eqn:fo6}), para o método da área e das sobras, respectivamente, e as novas restrições (\ref{eqn:14})-(\ref{eqn:17}).
+
+        %%% [TABELA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{table}[htbp]
+            \renewcommand{\arraystretch}{1.2}   % Configura o espacamento da tabela.
+            \centering
+            \footnotesize
+            \caption{Variáveis de linearização da área.} % Titulo. 
+            \begin{tabular}{ l p{11cm}}
+                \hline
+                \textbf{Variável}   &   \textbf{Descrição}  \\
+                \hline
+                ${\theta}_i$    &   Variável binária que armazena cada bit $i$ da altura $H$ do objeto.     \\
+                ${\omega}_i$    &   Variável inteira que substitui a multiplicação de $W$ com $\theta_i$.   \\
+                \hline
+            \end{tabular}
+            \caption*{Fonte: Produção do próprio autor.}    % Fonte.
+            \label{Tab-Variaveis-de-decisao-area}
+        \end{table}
+
+        Nova função objetivo para o modelo da área:
+    
+        \begin{equation}
+            Minimizar \; \sum_{i=1}^K (2^{i-1}) (\omega_{i})    \label{eqn:fo5}
+        \end{equation}
+        \begin{equation}
+            Minimizar \; \sum_{i=1}^K (2^{i-1}) (\omega_{i}) - \sum_{i=1}^N (w_{i} * h_{i})    \label{eqn:fo6}
+        \end{equation}
+
+        Sujeito as restrições de linearização:
+
+        %%% [RESTRICOES DE LINEARIZACAO DA AREA] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{small}
+            \begin{align}
+                \label{eqn:14}
+                % H   =  Somatorio da forma binaria.
+                & {H} = \sum_{i=1}^K (2^{i-1}) (\theta_{i}) \\
+                \label{eqn:15}
+                % Omega[i]       <=  W.
+                & {\omega}_{i} \leq {W}                         && \qquad 1 \leq i \leq K  \\
+                \label{eqn:16}
+                % Omega[i]       <=  M * Theta[i].
+                & {\omega}_{i} \leq {M} {\theta}_{i}            && \qquad 1 \leq i \leq K  \\
+                \label{eqn:17}
+                % Omega[i]       >=  W  - M*(1 -  Theta[i]).
+                & {\omega}_{i} \geq {W} - M (1 - {\theta}_{i})  && \qquad 1 \leq i \leq K
+            \end{align}
+        \end{small}
+
+        A função objetivo (\ref{eqn:fo5}) representa a multiplicação da área do objeto, $W H$, que deve ser minimizada. A função objetivo (\ref{eqn:fo6}) representa a minimização das sobras no objeto já considerando a linearização da área. A restrição (\ref{eqn:14}) indica ao modelo que o valor decimal da altura $H$ do objeto deve ser equivalente a sua representação binária $\theta_i$.

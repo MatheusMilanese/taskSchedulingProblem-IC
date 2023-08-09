@@ -15,7 +15,7 @@ vector<int> deliveryDates;
 
 // Argumentos do programa
 string arquivoLatex = "../latex/desenho.tex";
-string arquivoEntrada = "testes/instancia1";
+string arquivoEntrada = "../testes/instancia1";
 bool showProblemLog = false;
 bool showCplexLog = false;
 bool showGraphicLog = false;

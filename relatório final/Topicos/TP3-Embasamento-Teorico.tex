@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% [EMBASAMENTO TEORICO] %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Embasamento teórico}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% [PROBLEMA DE CORTE E EMPACOTAMENTO] %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Problema de corte e empacotamento}
+        
+        O problema de corte ou empacotamento bidimensional também é classificado como um \emph{ODPP} (\emph{Open Dimensional Packing Problem}) (\cite{Wascher2007}), onde a largura $W$ do objeto possui um valor fixo e a altura $H$ do objeto é aberta, podendo assumir qualquer valor. Com isso, a resolução do problema \emph{SPP} consiste em encontrar a menor altura de $H$ que maximize o aproveitamento da área do objeto, permitindo a inserção de um conjunto de $N$ itens retangulares, sem sobreposição, com uma configuração ótima para o corte ou o empacotamento dos mesmos.
+
+        Na literatura existem inúmeras abordagens para a resolução do \emph{Strip Packing Problem}, abrangendo os diferentes tipos e classificações do problema, descritos em (\cite{hopper2000two}) e (\cite{Wascher2007}). Diversos autores, em seus artigos, propõem modelos matemáticos exatos para solucionar o problema realizando comparações entre métodos ou aplicando heurísticas e meta-heurísticas para resolver, obtendo o melhor desempenho, instâncias maiores que apresentam uma grande demanda de itens.
+
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% [METODOS E HEURISTICAS] %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Métodos e Heurísticas}
+
+        \begin{comment}
+            REVISAR OU TIRAR SEÇÃO DE HEURÍSTICAS.
+        \end{comment}
+    
+        Em (\cite{Riff2009}) é feita uma revisão dos resultados mais recentes da época apresentando uma formulação matemática para o \emph{SPP-2D}. Nesse artigo são discutidos dois modelos exatos baseados em uma estratégia de ramificação e limite. Além disso, também são discutidas algumas heurísticas como o \emph{BL} (\emph{Bottom Left}), proposta por (\cite{Baker1980}), que possui versões aprimoradas por outros autores, sendo o \emph{BLF} (\emph{Bottom Left Fit}) apresentado por (\cite{Chazelle1983}), o \emph{BLD} (\emph{Bottom Left Decreasing}) por (\cite{HOPPER200134}) e o \emph{BLD*} por (\cite{Lesh2005}). Outra heurística, baseada no melhor ajuste para o \emph{Strip Packing Problem} não-guilhotinado, é o \emph{BF} (\emph{Best Fit}) proposto por (\cite{Burke2004}).
+
+        O artigo ainda aborda uma revisão sobre as principais meta-heurísticas: Busca tabu (TS), Recozimento Simulado (\emph{SA}) e Algoritmos genéticos (\emph{GAs}), que se utilizam das heurísticas de baixo nível, como as apresentadas no tópico anterior, para construir uma solução inicial e realizar uma busca local no layout do problema. Autores como (\cite{SOKE2006}) propõem um algoritmo genético (\emph{GA + BLF}) e um algoritmo de recozimento simulado (\emph{SA + BLF}) para tentar encontrar a melhor ordem de inserção dos itens em um objeto. Para problemas que permitem a rotação dos itens (\cite{BORTFELDT2006}) apresenta um algoritmo genético denominado \emph{Strip Packing Genetic Algorithm Layer} (\emph{SPGAL}). Baseado na heurística \emph{BF}, o autor (\cite{burke2006metaheuristic}) obteve melhores resultados utilizando o método (\emph{GA + BF}), dentre os seus outros modelos (\emph{TS + BF}) e (\emph{SA + BF}).

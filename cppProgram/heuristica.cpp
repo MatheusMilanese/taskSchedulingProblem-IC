@@ -59,10 +59,10 @@ vector<vector<int>> GerarTempoDeConclusao(vector<vector<int>> machineJobTime, ve
 
 int funcaoObjetivo(vector<vector<int>> machineJobTime, vector<int> deliveryDates, vector<int> indexOrder){
     int valorObjetivo = 0;
-    vector<vector<int>> tempoDeConclusão = GerarTempoDeConclusao(machineJobTime, deliveryDates, indexOrder);
+    vector<vector<int>> tempoDeConclusao = GerarTempoDeConclusao(machineJobTime, deliveryDates, indexOrder);
 
     for(int i = 1; i < deliveryDates.size(); i++){
-        valorObjetivo += std::abs(tempoDeConclusão[i][tempoDeConclusão[1].size()-1] - deliveryDates[indexOrder[i]]);
+        valorObjetivo += std::abs(tempoDeConclusao[i][tempoDeConclusao[1].size()-1] - deliveryDates[indexOrder[i]]);
     }
     
     return valorObjetivo;

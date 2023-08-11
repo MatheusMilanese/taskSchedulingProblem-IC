@@ -1,0 +1,11 @@
+5
+10
+94 81 49 26 68 32 34 10 51 10 
+4 80 78 88 33 69 62 22 47 82 
+52 17 21 89 19 33 58 80 70 25 
+0 17 6 50 95 27 82 29 37 86 
+91 93 18 69 33 3 38 95 25 37 
+378 530 306 251 371 
+
+O valor objetivo ótimo para essa instancia é: 1081
+O valor objetivo encontrado com o algoritmo genetico foi: 1081

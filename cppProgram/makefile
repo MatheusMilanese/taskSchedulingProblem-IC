@@ -8,8 +8,8 @@ LIBFORMAT = static_pic
 # the directories where CPLEX and CONCERT are installed.
 #
 #------------------------------------------------------------
-CPLEXDIR      = /opt/ibm/ILOG/CPLEX_Studio_Community221/cplex
-CONCERTDIR    = /opt/ibm/ILOG/CPLEX_Studio_Community221/concert
+CPLEXDIR      = /opt/ibm/ILOG/CPLEX_Studio2211/cplex
+CONCERTDIR    = /opt/ibm/ILOG/CPLEX_Studio2211/concert
 
 # ---------------------------------------------------------------------
 # Compiler selection 

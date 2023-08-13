@@ -23,6 +23,7 @@ bool solveWithHeuristic = false;
 bool solveWithGeneticAlgorithm = false;
 int sizePopulation = 10;
 int maxIterations = 10;
+int timeLimit = 1800;
 
 void lerArgumentos(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
@@ -151,6 +152,7 @@ int main(int argc, char **argv){
     try {
         IloModel model(env, "Modelo"); // criando o modelo
         IloCplex cplex(env); //criando o cplex
+        cplex.setParam(IloCplex::Param::TimeLimit, timeLimit);  // Limite de tempo para o Cplex
 
         // Variaveis de decisao
         IloArray<IloIntVarArray> X(env, numJobs+1);   // Ordem de realização dos "jobs"

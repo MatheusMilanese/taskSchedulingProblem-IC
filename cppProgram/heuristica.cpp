@@ -68,81 +68,6 @@ int funcaoObjetivo(vector<vector<int>> machineJobTime, vector<int> deliveryDates
     return valorObjetivo;
 }
 
-/*#######################################################
-             B U S C A      L O C A L
-  #######################################################*/
-
-vector<int> melhoraPorTroca(vector<vector<int>> machineJobTime, vector<int> deliveryDates, vector<int> indexOrder){
-    int valorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, indexOrder);
-    vector<int> melhorOrdem = indexOrder;
-    vector<int> ordemBase = indexOrder;
-    cout << "obj: " << valorObjetivo << " | ";
-    for(auto x : indexOrder) cout << x << " ";
-    cout  << endl;
-    for(int i = 1; i < indexOrder.size()-1; i++){
-        for(int j = i+1; j < indexOrder.size(); j++){
-            indexOrder[i] = ordemBase[j];
-            indexOrder[j] = ordemBase[i];
-            int novoValorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, indexOrder);
-            cout << "obj: " << novoValorObjetivo << " | ";
-            for(auto x : indexOrder) cout << x << " ";
-            cout  << endl;
-            if(novoValorObjetivo < valorObjetivo){
-                valorObjetivo = novoValorObjetivo;
-                melhorOrdem = indexOrder;
-            }
-            indexOrder[i] = ordemBase[i];
-            indexOrder[j] = ordemBase[j];
-        }
-        
-        indexOrder = melhorOrdem;
-        ordemBase = indexOrder;
-    }
-
-    cout << "Valor da função objetivo: " << valorObjetivo << endl;
-
-
-    return melhorOrdem;
-}
-
-int tempoTotal(vector<int> jobTime){
-    int tempo = 0;
-    for(auto x : jobTime){
-        tempo += x;
-    }
-    return tempo;
-}
-
-vector<int> heuristicaOrdemCrescente(vector<vector<int>> machineJobTime, vector<int> deliveryDates){
-    vector<int> indexOrder(deliveryDates.size());
-    indexOrder[1] = 1;
-    for(int i = 2; i < machineJobTime.size(); i++){
-        int k = i-1;
-        while(k >= 1 && 
-              deliveryDates[i] < deliveryDates[indexOrder[k]] ||
-              (deliveryDates[i] == deliveryDates[indexOrder[k]] && tempoTotal(machineJobTime[i]) > tempoTotal(machineJobTime[indexOrder[k]]))){
-            indexOrder[k+1] = indexOrder[k];
-            k--;
-        }
-        indexOrder[k+1] = i;
-    }
-
-    cout << "######## HEURISTICA #########\n";
-
-    indexOrder = melhoraPorTroca(machineJobTime, deliveryDates, indexOrder);
-
-    cout << "Ordem das tarefas: ";
-    for(int i = 1; i < indexOrder.size(); i++)
-        cout << indexOrder[i] << " \n"[i == indexOrder.size()-1];
-    cout << "############################\n";
-
-    return indexOrder;
-}
-
-/*#######################################################
-           A L G O R I T M O     G E N É T I C O 
-  #######################################################*/
-
 int getRandomNumber(int min, int max) {
     random_device rd;
     mt19937 rng(rd()); 
@@ -150,7 +75,13 @@ int getRandomNumber(int min, int max) {
     return uni(rng);
 }
 
+/*#######################################################
+           A L G O R I T M O     G E N É T I C O 
+  #######################################################*/
+
 vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> deliveryDates, int _sizePopulation, int _maxIterations){
+    auto Inicio = chrono::system_clock::now();
+    
     vector<vector<int>> population(_sizePopulation, vector<int>(deliveryDates.size()));
 
     for(int i = 1; i < population[0].size(); i++){
@@ -159,10 +90,11 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
     }
     int valorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, population[0]);
     int iteration = 0, maxIterations = _maxIterations, indexSolution;
-    bool newBestSolution;
+    int iterationsWithoutImprovement = 0;
+    int maxIterationsWithoutImprovement = 10;
 
-    while(iteration++ < maxIterations || newBestSolution){
-        newBestSolution = false;
+    while(iteration++ < maxIterations && iterationsWithoutImprovement < maxIterationsWithoutImprovement){
+        iterationsWithoutImprovement++;
         shuffle(population[1].begin()+1, population[1].end(), default_random_engine(random_device()()));
         for(int i = 2; i < _sizePopulation; i++){
 
@@ -202,19 +134,23 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
             int novoValorObjetivo = funcaoObjetivo(machineJobTime, deliveryDates, population[i]);
 
             if(novoValorObjetivo < valorObjetivo){
-                newBestSolution = true;
+                iterationsWithoutImprovement = 0;
                 valorObjetivo = novoValorObjetivo;
                 indexSolution = i;
             }
         }
-        if(newBestSolution){
+        if(iterationsWithoutImprovement == 0){
             for(int j = 1; j < population[0].size(); j++){
                 population[0][j] = population[indexSolution][j];
             }
         }
     }
 
+    auto Fim = chrono::system_clock::now();
+    chrono::duration<double> Diferenca = Fim - Inicio;
+    cout << iteration << endl;
     cout << "############ ALGORITMO GENETICO #############\n";
+    cout << "Tempo: " << Diferenca.count() << "s\n";
     cout << "tamanho da populacao: " << _sizePopulation << endl;
     cout << "numero de gerações: " << maxIterations << endl;
     cout << "valor da função objetivo: " << valorObjetivo << endl;

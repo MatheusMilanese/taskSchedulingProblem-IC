@@ -21,9 +21,10 @@ bool showCplexLog = false;
 bool showGraphicLog = false;
 bool solveWithHeuristic = false;
 bool solveWithGeneticAlgorithm = false;
-int sizePopulation = 10;
-int maxIterations = 10;
+int sizePopulation = 1000;
+int maxIterations = 100;
 int timeLimit = 1800;
+int qtdThreads = 1;
 
 void lerArgumentos(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
@@ -36,8 +37,6 @@ void lerArgumentos(int argc, char* argv[]) {
             showCplexLog = true;
         } else if (argument == "-glog") {
             showGraphicLog = true;
-        } else if (argument == "-h") {
-            solveWithHeuristic = true;
         } else if (argument == "-ga") {
             solveWithGeneticAlgorithm = true;
         } else if (argument.find("-sizePopulation==") == 0){
@@ -135,9 +134,6 @@ int main(int argc, char **argv){
     for(int i = 1; i <= numJobs; ++i)
         arq >> deliveryDates[i];
 
-    if(solveWithHeuristic){
-        heuristicaOrdemCrescente(machineJobTime, deliveryDates); 
-    }
     if(solveWithGeneticAlgorithm){
         algoritmoGenetico(machineJobTime, deliveryDates, sizePopulation, maxIterations);
     }
@@ -153,6 +149,7 @@ int main(int argc, char **argv){
         IloModel model(env, "Modelo"); // criando o modelo
         IloCplex cplex(env); //criando o cplex
         cplex.setParam(IloCplex::Param::TimeLimit, timeLimit);  // Limite de tempo para o Cplex
+        cplex.setParam(IloCplex::Param::Threads, qtdThreads);  // Limite de threads para o Cplex
 
         // Variaveis de decisao
         IloArray<IloIntVarArray> X(env, numJobs+1);   // Ordem de realização dos "jobs"

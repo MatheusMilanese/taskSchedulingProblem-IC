@@ -1,5 +1,6 @@
 #include "heuristica.h"
 
+
 /*#######################################################
              F U N Ç Õ E S     I N T E R N A S
   #######################################################*/
@@ -69,10 +70,7 @@ int funcaoObjetivo(vector<vector<int>> machineJobTime, vector<int> deliveryDates
 }
 
 int getRandomNumber(int min, int max) {
-    random_device rd;
-    mt19937 rng(rd()); 
-    uniform_int_distribution<int> uni(min, max);
-    return uni(rng);
+    return min + rand()%(max-min+1);
 }
 
 /*#######################################################
@@ -148,7 +146,6 @@ vector<int> algoritmoGenetico(vector<vector<int>> machineJobTime, vector<int> de
 
     auto Fim = chrono::system_clock::now();
     chrono::duration<double> Diferenca = Fim - Inicio;
-    cout << iteration << endl;
     cout << "############ ALGORITMO GENETICO #############\n";
     cout << "Tempo: " << Diferenca.count() << "s\n";
     cout << "tamanho da populacao: " << _sizePopulation << endl;

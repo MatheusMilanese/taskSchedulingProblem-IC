@@ -23,7 +23,7 @@ bool solveWithHeuristic = false;
 bool solveWithGeneticAlgorithm = false;
 int sizePopulation = 1000;
 int maxIterations = 100;
-int timeLimit = 1800;
+int timeLimit = 3600;
 int qtdThreads = 1;
 
 void lerArgumentos(int argc, char* argv[]) {
@@ -285,6 +285,18 @@ int main(int argc, char **argv){
         //imprimindo o resultado
         if(showProblemLog){
             if(showCplexLog) cout << "\n";
+
+            IloInt accumulatedIterations = cplex.getNiterations();
+            IloInt accumulatedNodes = cplex.getNnodes();
+            IloNum fObjBestBound = cplex.getBestObjValue();
+            IloNum fObjValue = cplex.getObjValue();
+            double cplexGap = cplex.getMIPRelativeGap();
+
+            cout << "[###] Best objective bound: " << fObjBestBound << endl;
+            cout << "[###] Cplex GAP: " << fabs(cplexGap) * 100.0 << "%" << endl;
+            cout << "[###] Objective obtained: " << fObjValue << endl;
+            cout << "[###] MIP Iterations: " << accumulatedIterations << endl;
+            cout << "[###] B&B Nodes: " << accumulatedNodes << endl << endl;
 
             cout << "Tempo: " << Diferenca.count() << "s\n";
             cout << "Valor da função objetivo: " << cplex.getObjValue() << endl;

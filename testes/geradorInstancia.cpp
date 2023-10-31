@@ -8,7 +8,7 @@ int main() {
     
 
     // Abrindo o arquivo para escrita
-    ofstream outputFile("n80m20/instancia6");
+    ofstream outputFile("");
 
 
     // Inicializando a semente para a geração de números aleatórios
@@ -27,7 +27,7 @@ int main() {
 
     // Gerando a última linha com n números aleatórios
     for (int i = 0; i < qtdJobs; ++i) {
-        int randomNumber = 100 + (rand() % (100*qtdJobs)); // Números aleatórios entre 0 e 99
+        int randomNumber = 100 + (rand() % (100*qtdJobs)); 
         outputFile << randomNumber << " ";
     }
 
